@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Online Exam Portal</title>
+
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <style>
+    body {
+      font-family: Arial;
+      background: #f0f2f5;
+      text-align: center;
+      padding: 30px;
+    }
+
+    .box {
+      background: white;
+      padding: 25px;
+      max-width: 500px;
+      margin: auto;
+      border-radius: 10px;
+    }
+
+    button, input {
+      padding: 10px;
+      margin: 10px;
+    }
+
+    button {
+      background: blue;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    .question {
+      text-align: left;
+      margin: 20px;
+    }
+  </style>
+</head>
+
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+
+function App() {
+
+  const [name, setName] = React.useState("");
+  const [start, setStart] = React.useState(false);
+  const [answers, setAnswers] = React.useState({});
+  const [result, setResult] = React.useState(false);
+
+  const questions = [
+    {
+      question: "1. What is React?",
+      options: ["Library", "Database", "Language", "Browser"],
+      answer: "Library"
+    },
+    {
+      question: "2. Which language is used in React?",
+      options: ["Java", "JavaScript", "Python", "C"],
+      answer: "JavaScript"
+    },
+    {
+      question: "3. Which Hook is used for state?",
+      options: ["useEffect", "useState", "useRef", "useMemo"],
+      answer: "useState"
+    }
+  ];
+
+  function handleSubmit() {
+    setResult(true);
+  }
+
+  const score = questions.filter(
+    (q, i) => answers[i] === q.answer
+  ).length;
+
+  return (
+    <div className="box">
+
+      <h2>Online Exam Portal</h2>
+
+      {!start ? (
+        <>
+          <h3>Student Login</h3>
+
+          <input
+            placeholder="Enter Student Name"
+            value={name}
+            onChange={e => setName(e.target.value)}
+          />
+
+          <br />
+
+          <button onClick={() => {
+            if (name.trim()) setStart(true);
+          }}>
+            Start Exam
+          </button>
+        </>
+      ) : (
+        <>
+          <h3>Welcome, {name}!</h3>
+
+          {!result ? (
+            <>
+              <h3>Exam Questions</h3>
+
+              {questions.map((q, i) => (
+                <div className="question" key={i}>
+                  <p><b>{q.question}</b></p>
+
+                  {q.options.map(option => (
+                    <label key={option}>
+                      <input
+                        type="radio"
+                        name={"q" + i}
+                        value={option}
+                        onChange={() =>
+                          setAnswers({
+                            ...answers,
+                            [i]: option
+                          })
+                        }
+                      />
+                      {option}
+                      <br />
+                    </label>
+                  ))}
+                </div>
+              ))}
+
+              <button onClick={handleSubmit}>
+                Submit Exam
+              </button>
+            </>
+          ) : (
+            <>
+              <h3>Exam Result</h3>
+
+              <p>Student Name: {name}</p>
+
+              <h2>
+                Score: {score} / {questions.length}
+              </h2>
+
+              <p>
+                {score >= 2 ? "Passed!" : "Try Again!"}
+              </p>
+
+              <button onClick={() => {
+                setName("");
+                setStart(false);
+                setAnswers({});
+                setResult(false);
+              }}>
+                Logout
+              </button>
+            </>
+          )}
+        </>
+      )}
+
+    </div>
+  );
+}
+
+ReactDOM.createRoot(
+  document.getElementById("root")
+).render(<App />);
+
+</script>
+</body>
+</html>
